@@ -11,6 +11,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "test": "mocha --reporter spec",
+    "clean": "rimraf dist node_modules coverage",
     "test-lint": "eslint src --ext .js,.ts",
     "prepublishOnly": "npm run build"
   },

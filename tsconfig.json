@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "strict": true,
-    "module": "CommonJS",
+    "module": "es2015",
     "target": "es2015",
     "esModuleInterop": true,
     "lib": ["esnext"],
     "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
+    "moduleResolution": "node",
     "typeRoots": [
       "./@types",
       "./node_modules/@types"

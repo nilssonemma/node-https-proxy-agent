@@ -4,11 +4,27 @@ import url from 'url';
 import assert from 'assert';
 import createDebug from 'debug';
 import { OutgoingHttpHeaders } from 'http';
-import { Agent, ClientRequest, RequestOptions } from 'agent-base';
-import { HttpsProxyAgentOptions } from '.';
+import { Agent,AgentOptions, ClientRequest, RequestOptions } from 'agent-base';
 import parseProxyResponse from './parse-proxy-response';
 
+export interface HttpsProxyAgentOptions
+extends AgentOptions,
+	BaseHttpsProxyAgentOptions,
+	Partial<
+		Omit<
+			url.Url & net.NetConnectOpts & tls.ConnectionOptions,
+			keyof BaseHttpsProxyAgentOptions
+		>
+	> {}
 const debug = createDebug('https-proxy-agent:agent');
+
+export interface BaseHttpsProxyAgentOptions {
+	headers?: OutgoingHttpHeaders;
+	secureProxy?: boolean;
+	host?: string | null;
+	path?: string | null;
+	port?: string | number | null;
+}
 
 /**
  * The `HttpsProxyAgent` implements an HTTP Agent subclass that connects to
