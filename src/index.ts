@@ -2,7 +2,6 @@ import net from 'net';
 import tls from 'tls';
 import url from 'url';
 import assert from 'assert';
-import createDebug from 'debug';
 import { OutgoingHttpHeaders } from 'http';
 import { Agent,AgentOptions, ClientRequest, RequestOptions } from 'agent-base';
 import parseProxyResponse from './parse-proxy-response';
@@ -16,7 +15,6 @@ extends AgentOptions,
 			keyof BaseHttpsProxyAgentOptions
 		>
 	> {}
-const debug = createDebug('https-proxy-agent:agent');
 
 export interface BaseHttpsProxyAgentOptions {
 	headers?: OutgoingHttpHeaders;
@@ -56,7 +54,6 @@ export default class HttpsProxyAgent extends Agent {
 				'an HTTP(S) proxy server `host` and `port` must be specified!'
 			);
 		}
-		debug('creating new HttpsProxyAgent instance: %o', opts);
 		super(opts);
 
 		const proxy: HttpsProxyAgentOptions = { ...opts };
@@ -107,10 +104,8 @@ export default class HttpsProxyAgent extends Agent {
 		// Create a socket connection to the proxy server.
 		let socket: net.Socket;
 		if (secureProxy) {
-			debug('Creating `tls.Socket`: %o', proxy);
 			socket = tls.connect(proxy as tls.ConnectionOptions);
 		} else {
-			debug('Creating `net.Socket`: %o', proxy);
 			socket = net.connect(proxy as net.NetConnectOpts);
 		}
 
@@ -153,7 +148,6 @@ export default class HttpsProxyAgent extends Agent {
 			if (opts.secureEndpoint) {
 				// The proxy is connecting to a TLS server, so upgrade
 				// this socket connection to a TLS connection.
-				debug('Upgrading socket connection to TLS');
 				const servername = opts.servername || opts.host;
 				return tls.connect({
 					...omit(opts, 'host', 'hostname', 'path', 'port'),
@@ -183,7 +177,6 @@ export default class HttpsProxyAgent extends Agent {
 
 		// Need to wait for the "socket" event to re-play the "data" events.
 		req.once('socket', (s: net.Socket) => {
-			debug('replaying proxy buffer for failed request');
 			assert(s.listenerCount('data') > 0);
 
 			// Replay the "buffered" Buffer onto the fake `socket`, since at

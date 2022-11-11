@@ -31,8 +31,7 @@
     "url": "https://github.com/TooTallNate/node-https-proxy-agent/issues"
   },
   "dependencies": {
-    "agent-base": "6",
-    "debug": "4"
+    "agent-base": "nilssonemma/node-agent-base#wip"
   },
   "devDependencies": {
     "@types/debug": "4",

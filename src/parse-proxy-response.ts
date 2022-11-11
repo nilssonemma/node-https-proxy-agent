@@ -1,7 +1,5 @@
-import createDebug from 'debug';
 import { Readable } from 'stream';
 
-const debug = createDebug('https-proxy-agent:parse-proxy-response');
 
 export interface ProxyResponse {
 	statusCode: number;
@@ -26,23 +24,13 @@ export default function parseProxyResponse(
 		}
 
 		function cleanup() {
-			socket.removeListener('end', onend);
 			socket.removeListener('error', onerror);
-			socket.removeListener('close', onclose);
 			socket.removeListener('readable', read);
 		}
 
-		function onclose(err?: Error) {
-			debug('onclose had error %o', err);
-		}
-
-		function onend() {
-			debug('onend');
-		}
-
+		
 		function onerror(err: Error) {
 			cleanup();
-			debug('onerror %o', err);
 			reject(err);
 		}
 
@@ -55,7 +43,6 @@ export default function parseProxyResponse(
 
 			if (endOfHeaders === -1) {
 				// keep buffering
-				debug('have not received end of HTTP headers yet...');
 				read();
 				return;
 			}
@@ -66,7 +53,6 @@ export default function parseProxyResponse(
 				buffered.indexOf('\r\n')
 			);
 			const statusCode = +firstLine.split(' ')[1];
-			debug('got proxy server response: %o', firstLine);
 			resolve({
 				statusCode,
 				buffered
@@ -74,8 +60,6 @@ export default function parseProxyResponse(
 		}
 
 		socket.on('error', onerror);
-		socket.on('close', onclose);
-		socket.on('end', onend);
 
 		read();
 	});
